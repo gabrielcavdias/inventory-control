@@ -11,6 +11,7 @@ class Sale extends Model
     use HasFactory;
     protected $fillable = [
         'customer',
+        'profit',
     ];
 
     public function products()

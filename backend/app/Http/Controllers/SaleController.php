@@ -29,15 +29,15 @@ class SaleController extends Controller
      */
     public function store(StoreSaleRequest $request)
     {
-        // try {
-        $saleDTO = SaleDTO::createFromRequest($request);
-        return $this->ok($this->service->createNewSale($saleDTO));
-        // } catch (ProductMismatchException | NotEnoughProductsException $e) {
-        //     return $this->unprocessable(data: ['errors' => ['produtos' => $e->getMessage()]], message: $e->getMessage());
-        // } catch (Throwable $e) {
-        //     logger("Erro ao venda compra " . $e->getMessage());
-        //     return $this->errorResponse(message: "Erro ao registrar venda, tente novamente mais tarde.");
-        // }
+        try {
+            $saleDTO = SaleDTO::createFromRequest($request);
+            return $this->ok($this->service->createNewSale($saleDTO));
+        } catch (ProductMismatchException | NotEnoughProductsException $e) {
+            return $this->unprocessable(data: ['errors' => ['produtos' => $e->getMessage()]], message: $e->getMessage());
+        } catch (Throwable $e) {
+            logger("Erro ao venda compra " . $e->getMessage());
+            return $this->errorResponse(message: "Erro ao registrar venda, tente novamente mais tarde.");
+        }
     }
 
     /**

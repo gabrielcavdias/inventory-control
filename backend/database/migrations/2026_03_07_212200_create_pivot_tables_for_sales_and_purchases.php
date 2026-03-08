@@ -16,7 +16,8 @@ return new class extends Migration
     {
         Schema::create('product_purchase', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
             $table->foreignIdFor(Purchase::class)->constrained();
             $table->foreignIdFor(Product::class)->constrained();
             $table->integer('unit_price');
@@ -25,7 +26,8 @@ return new class extends Migration
 
         Schema::create('product_sale', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->nullable();
             $table->foreignIdFor(Sale::class)->constrained();
             $table->foreignIdFor(Product::class)->constrained();
             $table->integer('unit_price');
@@ -39,5 +41,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('product_purchase');
+        Schema::dropIfExists('product_sale');
     }
 };

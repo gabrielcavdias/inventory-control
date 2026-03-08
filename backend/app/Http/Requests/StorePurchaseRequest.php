@@ -17,8 +17,8 @@ class StorePurchaseRequest extends FormRequest
             'fornecedor' => ['required', 'string', 'min:3', 'max:255'],
             'produtos' => ['required', 'array', 'min:1'],
             'produtos.*.id' => ['required', 'integer', 'exists:products,id',],
-            'produtos.*.quantidade' => ['required', 'integer', 'min:1', 'max:999999'],
-            'produtos.*.preco_unitario' => ['required', 'decimal:2', 'min:1', 'max:999999'],
+            'produtos.*.quantidade' => ['required', 'integer', 'min:0.01', 'max:999999'],
+            'produtos.*.preco_unitario' => ['required', 'decimal:2', 'min:0.01', 'max:999999'],
 
         ];
     }

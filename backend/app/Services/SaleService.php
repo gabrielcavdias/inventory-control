@@ -10,7 +10,6 @@ use App\Models\Sale;
 use App\Traits\ProductCalculation;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use PHPUnit\Runner\DeprecationCollector\Collector;
 
 class SaleService
 {
