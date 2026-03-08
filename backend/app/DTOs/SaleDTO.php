@@ -2,17 +2,17 @@
 
 namespace App\DTOs;
 
-use App\Http\Requests\StorePurchaseRequest;
+use App\Http\Requests\StoreSaleRequest;
 use App\Interfaces\TransactionInterface;
 
-class PurchaseDTO implements TransactionInterface
+class SaleDTO implements TransactionInterface
 {
     public function __construct(
-        public string $supplier,
+        public string $customer,
         public TransactionProductList $products,
     ) {}
 
-    public static function createFromRequest(StorePurchaseRequest $request)
+    public static function createFromRequest(StoreSaleRequest $request)
     {
         $data = $request->validated();
         $productsParsed = array_map(fn(array $product) => [
@@ -22,7 +22,7 @@ class PurchaseDTO implements TransactionInterface
 
         ], $data['produtos']);
         return new self(
-            supplier: $data['fornecedor'],
+            customer: $data['cliente'],
             products: new TransactionProductList($productsParsed),
         );
     }

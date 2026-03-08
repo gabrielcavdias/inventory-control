@@ -26,13 +26,13 @@ class PurchaseController extends Controller
      */
     public function store(StorePurchaseRequest $request)
     {
-        // try {
-        $purchaseDTO = PurchaseDTO::createFromRequest($request);
-        return $this->ok($this->service->createNewPurchase($purchaseDTO));
-        // } catch (Throwable $e) {
-        // logger("Erro ao registrar compra " . $e->getMessage());
-        // return $this->errorResponse(message: "Erro ao registrar compra, tente novamente mais tarde.");
-        // }
+        try {
+            $purchaseDTO = PurchaseDTO::createFromRequest($request);
+            return $this->ok($this->service->createNewPurchase($purchaseDTO));
+        } catch (Throwable $e) {
+            logger("Erro ao registrar compra " . $e->getMessage());
+            return $this->errorResponse(message: "Erro ao registrar compra, tente novamente mais tarde.");
+        }
     }
 
     /**

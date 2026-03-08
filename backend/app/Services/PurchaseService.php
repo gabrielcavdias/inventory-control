@@ -7,21 +7,22 @@ use App\Models\Product;
 use App\Models\ProductPurchase;
 use App\Models\Purchase;
 use App\DTOs\PurchaseDTO;
+use App\Traits\ProductCalculation;
 use Illuminate\Support\Facades\DB;
 
 class PurchaseService
 {
-
+    use ProductCalculation;
     public function createNewPurchase(PurchaseDTO $purchaseData)
     {
         return DB::transaction(function () use ($purchaseData) {
             $purchase = $this->createPurchaseModel($purchaseData);
 
-            $productsIds = array_map(fn(array $product) => $product['product_id'], $purchaseData->products);
+            $productsIds = array_map(fn(array $product) => $product['product_id'], $purchaseData->products->items);
 
             $this->attachProductsToPurchase($purchaseData, $purchase, $productsIds);
 
-            $this->updateProductStockQuantities($purchaseData);
+            $this->updateProductStockQuantities($purchaseData, '+');
 
             $this->updateProductAverageCosts($productsIds);
 
@@ -40,7 +41,7 @@ class PurchaseService
     private function attachProductsToPurchase(PurchaseDTO $purchaseData, Purchase $purchase, array $productsIds)
     {
         $productsCount = Product::query()->lockForUpdate()->whereIn('id', $productsIds)->count();
-        if ($productsCount < count($purchaseData->products)) {
+        if ($productsCount < count($purchaseData->products->items)) {
             throw new ProductMismatchException("Nem todos os produtos da compra estão disponíveis.");
         }
         /**
@@ -61,32 +62,6 @@ class PurchaseService
         $purchase->products()->attach($attachStatement);
     }
 
-    private function updateProductStockQuantities(PurchaseDTO $purchaseData): void
-    {
-        /**
-         * Aqui a ideia é atualizar cada quantidade em uma única query
-         * caso os produtos fossem muitos, poderíamos fazer por batches
-         * usando array_chunks e afins, mas para simplificar estou assumindo que não serão tantos produtos comprados por vez.
-         */
-        $cases = [];
-        $ids = [];
-        $params = [];
-
-        foreach ($purchaseData->products as $productPurchase) {
-            $cases[] = "WHEN id = ? THEN stock_quantity + ?";
-            $ids[] = $productPurchase['product_id'];
-            $params[] = $productPurchase['product_id']; // when $productPurchase['product_id']
-            $params[] = $productPurchase['quantity']; // then stock_quantity + $productPurchase['quantity']
-        }
-
-        $casesSql = implode(' ', $cases);
-        $placeholders = count($ids) |> (fn($x) => array_fill(0, $x, '?')) |> (fn($y) => implode(',', $y));
-        DB::update("
-                UPDATE products
-                SET stock_quantity = CASE {$casesSql} END
-                WHERE id IN ({$placeholders})
-            ", array_merge($params, $ids));
-    }
 
     private function updateProductAverageCosts(array $productsIds)
     {

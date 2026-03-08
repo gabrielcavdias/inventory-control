@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SaleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,13 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters([
             'compras' => 'purchase'
         ])->missing(function () {
-            return response()->json(['message' => 'Produto não encontrado'], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'Compra não encontrado'], Response::HTTP_NOT_FOUND);
+        })->except(['update']);
+
+    Route::apiResource('vendas', SaleController::class)
+        ->parameters([
+            'compras' => 'sale'
+        ])->missing(function () {
+            return response()->json(['message' => 'Venda não encontrado'], Response::HTTP_NOT_FOUND);
         })->except(['update']);
 });

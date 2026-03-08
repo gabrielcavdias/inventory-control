@@ -20,7 +20,7 @@ class ProductResource extends JsonResource
             'nome' => $this->name,
             'preco_venda' => $this->suggested_price / 100, // De centavos para real com casas decimais
             'estoque_atual' => $this->stock_quantity,
-            'custo_medio' => $this->average_cost,
+            'custo_medio' => $this->average_cost / 100,
         ];
     }
 }
