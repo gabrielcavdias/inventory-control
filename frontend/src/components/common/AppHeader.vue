@@ -10,6 +10,18 @@ const routes = [
     path: "/",
   },
   {
+    name: "Produtos",
+    path: "/produtos",
+  },
+  {
+    name: "Compras",
+    path: "/compras",
+  },
+  {
+    name: "Vendas",
+    path: "/vendas",
+  },
+  {
     name: "Sobre",
     path: "/sobre",
   },

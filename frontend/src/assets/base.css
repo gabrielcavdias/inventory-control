@@ -122,3 +122,29 @@
 .debug {
   outline: 1px solid red;
 }
+
+/* Remover scrollbar feia do google chrome */
+/*
+Source - https://stackoverflow.com/a/9664451
+Posted by orel, modified by community. See post 'Timeline' for change history
+Retrieved 2026-03-08, License - CC BY-SA 3.0
+*/
+
+::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffffff83;
+  -webkit-border-radius: 1ex;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffffffc5;
+}
+
+::-webkit-scrollbar-corner {
+  background: #000;
+}

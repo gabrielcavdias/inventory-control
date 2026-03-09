@@ -7,9 +7,9 @@ use App\Models\Product;
 
 class ProductService
 {
-    public function getAllPaginated(int $perPage = 10, int $page = 1)
+    public function getAllPaginated(int $perPage = 10, int $page = 1, string $name = '')
     {
-        return Product::query()->paginate(perPage: $perPage, page: $page);
+        return Product::query()->when(!empty($name), fn($q) => $q->whereLike('name', "%$name%"))->paginate(perPage: $perPage, page: $page);
     }
 
     public function storeProduct(ProductDTO $productData): Product

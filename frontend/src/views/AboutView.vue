@@ -1,15 +1,11 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+  <h1
+    class="text-center text-2xl font-bold mb-6 text-emerald-600 dark:text-emerald-400"
+  >
+    Sobre
+  </h1>
+  <main class="max-w-7xl mx-auto">
+    Essa é uma aplicação web para controle de estoque, com compra e venda de
+    produtos.
+  </main>
 </template>
-
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-  }
-}
-</style>

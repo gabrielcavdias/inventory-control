@@ -13,6 +13,23 @@ use Illuminate\Support\Facades\DB;
 class PurchaseService
 {
     use ProductCalculation;
+
+    public function getAllPaginated(int $page = 1, int $perPage = 10)
+    {
+        $purchases =  Purchase::query()
+            ->with('products')
+            ->paginate(page: $page, perPage: $perPage)
+            ->through(function ($purchase) {
+                return [
+                    'supplier' => $purchase->supplier,
+                    'total_cost' => collect($purchase->products)->sum(function ($product) {
+                        return $product->pivot->quantity * $product->pivot->unit_price;
+                    })
+                ];
+            });
+        return $purchases;
+    }
+
     public function createNewPurchase(PurchaseDTO $purchaseData)
     {
         return DB::transaction(function () use ($purchaseData) {

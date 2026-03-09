@@ -1,5 +1,5 @@
 import type { Product } from "./product";
-import type { Sale } from "./transactions";
+import type { Purchase, Sale } from "./transactions";
 
 export type DashboardData = {
   vendas_hoje: number;
@@ -8,8 +8,5 @@ export type DashboardData = {
   itens_vendidos: number;
   produtos: Product[];
   vendas: Sale[];
-  compras: {
-    fornecedor: string;
-    custo_total: number;
-  }[];
+  compras: Purchase[];
 };

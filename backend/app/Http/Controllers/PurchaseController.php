@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePurchaseRequest;
 use App\Models\Purchase;
 use App\DTOs\PurchaseDTO;
+use App\Http\Resources\PurchaseIndexCollection;
+use App\Http\Resources\PurchaseResource;
 use App\Services\PurchaseService;
 use App\Traits\ApiResponses;
 use Throwable;
@@ -18,7 +20,14 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        dd("TODO: implementar");
+        $page = request()->query('page', 1);
+        $perPage = request()->query('per_page', 10);
+        try {
+            return PurchaseResource::collection($this->service->getAllPaginated(page: $page, perPage: $perPage)); // 200 ok
+        } catch (Throwable $e) {
+            logger("Erro ao buscar compras " . $e->getMessage());
+            return $this->errorResponse(message: "Erro ao buscar compras, tente novamente mais tarde.");
+        }
     }
 
     /**
@@ -33,21 +42,5 @@ class PurchaseController extends Controller
             logger("Erro ao registrar compra " . $e->getMessage());
             return $this->errorResponse(message: "Erro ao registrar compra, tente novamente mais tarde.");
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Purchase $purchase)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Purchase $purchase)
-    {
-        //
     }
 }

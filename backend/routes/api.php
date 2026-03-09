@@ -24,19 +24,22 @@ Route::middleware('auth:sanctum')->group(function () {
             'produtos' => 'product'
         ])->missing(function () {
             return response()->json(['message' => 'Produto não encontrado'], Response::HTTP_NOT_FOUND);
-        });
+        })
+        ->middleware([HandlePrecognitiveRequests::class]);
 
     Route::apiResource('compras', PurchaseController::class)
         ->parameters([
             'compras' => 'purchase'
         ])->missing(function () {
             return response()->json(['message' => 'Compra não encontrado'], Response::HTTP_NOT_FOUND);
-        })->except(['update']);
+        })->except(['update', 'destroy', 'show'])
+        ->middleware([HandlePrecognitiveRequests::class]);
 
     Route::apiResource('vendas', SaleController::class)
         ->parameters([
             'compras' => 'sale'
         ])->missing(function () {
             return response()->json(['message' => 'Venda não encontrado'], Response::HTTP_NOT_FOUND);
-        })->except(['update']);
+        })->except(['update'])
+        ->middleware([HandlePrecognitiveRequests::class]);
 });

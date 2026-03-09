@@ -9,17 +9,17 @@ import App from "./App.vue";
 import router from "./router";
 
 // @ts-ignore
-window.axios = new Axios.create();
+window.axios = Axios.create();
 // @ts-ignore
 (window.axios as Axios).interceptors.request.use(
-  (config) => {
+  (config: any) => {
     const token = sessionStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
+  (error: any) => {
     return Promise.reject(error);
   },
 );

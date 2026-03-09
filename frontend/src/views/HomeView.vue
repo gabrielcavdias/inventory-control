@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import LoadingScreen from "@/components/common/LoadingScreen.vue";
 import IconArrowLongRight from "@/components/icons/IconArrowLongRight.vue";
-import { api_url, money } from "@/lib/utils";
+import { useApi } from "@/composables/useApi";
+import { money } from "@/lib/utils";
 import type { DashboardData } from "@/models/dashboard";
-// @ts-ignore
-import { useAxios } from "@vueuse/integrations/useAxios";
-// @ts-ignore
-const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
-  data: DashboardData;
-  isFinished: boolean;
-};
+import { onMounted } from "vue";
+
+const { data, isFetching, fetchData } = useApi<DashboardData>();
+onMounted(async () => {
+  fetchData("/dashboard");
+});
 </script>
 
 <template>
@@ -18,11 +18,11 @@ const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
   >
     Métricas do negócio
   </h1>
-  <main class="max-w-7xl mx-auto">
+  <main class="max-w-7xl mx-auto" v-if="!isFetching && data">
     <!-- Métricas gerais -->
     <ul class="grid md:grid-cols-4 gap-2 min-h-32">
       <li
-        class="bg-emerald-500 text-gray-100 font-bold grid place-items-center text-center text-2xl rounded-2xl"
+        class="bg-emerald-500 text-gray-200 font-bold grid place-items-center text-center text-2xl rounded-2xl"
       >
         <div>
           {{ data.vendas_hoje }}
@@ -30,7 +30,7 @@ const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
         </div>
       </li>
       <li
-        class="bg-emerald-500 text-gray-100 font-bold grid place-items-center text-center text-2xl rounded-2xl"
+        class="bg-emerald-500 text-gray-200 font-bold grid place-items-center text-center text-2xl rounded-2xl"
       >
         <div>
           {{ money(data.lucro_hoje) }}
@@ -38,7 +38,7 @@ const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
         </div>
       </li>
       <li
-        class="bg-emerald-500 text-gray-100 font-bold grid place-items-center text-center text-2xl rounded-2xl"
+        class="bg-emerald-500 text-gray-200 font-bold grid place-items-center text-center text-2xl rounded-2xl"
       >
         <div>
           {{ money(data.total_gasto) }}
@@ -46,7 +46,7 @@ const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
         </div>
       </li>
       <li
-        class="bg-emerald-500 text-gray-100 font-bold grid place-items-center text-center text-2xl rounded-2xl"
+        class="bg-emerald-500 text-gray-200 font-bold grid place-items-center text-center text-2xl rounded-2xl"
       >
         <div>
           {{ data.itens_vendidos }}
@@ -76,7 +76,7 @@ const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
         </ul>
         <div class="mt-4 flex justify-end">
           <RouterLink
-            to="#"
+            to="/produtos"
             class="text-emerald-600 dark:text-emerald-400 font-bold inline-flex items-center gap-2 border-b-2 border-transparent hover:border-current transition"
           >
             Ver Mais
@@ -105,7 +105,7 @@ const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
         </ul>
         <div class="mt-4 flex justify-end">
           <RouterLink
-            to="#"
+            to="/vendas"
             class="text-emerald-600 dark:text-emerald-400 font-bold inline-flex items-center gap-2 border-b-2 border-transparent hover:border-current transition"
           >
             Ver Mais
@@ -134,7 +134,7 @@ const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
         </ul>
         <div class="mt-4 flex justify-end">
           <RouterLink
-            to="#"
+            to="/compras"
             class="text-emerald-600 dark:text-emerald-400 font-bold inline-flex items-center gap-2 border-b-2 border-transparent hover:border-current transition"
           >
             Ver Mais
@@ -144,5 +144,5 @@ const { data, isFinished } = useAxios(api_url("/dashboard"), window.axios) as {
       </section>
     </div>
   </main>
-  <LoadingScreen v-if="!isFinished" />
+  <LoadingScreen v-if="isFetching" />
 </template>

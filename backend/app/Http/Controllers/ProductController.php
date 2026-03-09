@@ -21,8 +21,9 @@ class ProductController extends Controller
     {
         $page = request()->query('page', 1);
         $perPage = request()->query('per_page', 10);
+        $name = request()->query('name', '');
         try {
-            $paginatedResult = $this->service->getAllPaginated($perPage, $page);
+            $paginatedResult = $this->service->getAllPaginated($perPage, $page, $name);
             return new ProductCollection($paginatedResult); // 200 OK!
         } catch (Throwable $e) {
             logger("Erro ao listar produtos " . $e->getMessage());
