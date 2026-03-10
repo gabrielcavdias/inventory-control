@@ -15,7 +15,7 @@ Essa é uma aplicação web para controle de estoque, com compra e venda de prod
 
 1. Clone o repositório
 ```bash
-git clone [url]
+git clone https://github.com/gabrielcavdias/inventory-control
 cd [pasta-do-projeto]
 ```
 
