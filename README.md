@@ -25,7 +25,9 @@ docker compose up -d
 ```
 3. Instalando dependências
 ```bash
+
 docker compose exec front npm install
+docker compose exec api cp .env.example .env 
 docker compose exec api composer install
 docker compose exec api php artisan migrate
 docker compose exec api php artisan db:seed
