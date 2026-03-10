@@ -27,8 +27,10 @@ docker compose up -d
 ```bash
 docker compose exec front npm install
 docker compose exec api composer install
+docker compose exec api php artisan migrate
 docker compose exec api php artisan db:seed
 ```
+
 4. Acesse a aplicação
 
 - Frontend: http://localhost:5173
