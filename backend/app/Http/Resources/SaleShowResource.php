@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PurchaseResource extends JsonResource
+class SaleShowResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +14,12 @@ class PurchaseResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         return [
-            'id' => $this['id'],
-            'fornecedor' => $this['supplier'],
-            'custo_total' => $this['total_cost'] / 100,
+            'id' => $this->id,
+            'cliente' => $this->customer,
+            'lucro' => $this->profit / 100,
+            'produtos' => new ProductWithPivotDataResource($this['products']->toArray()),
+            'cancelada' => $this->cancelled_at,
         ];
     }
 }

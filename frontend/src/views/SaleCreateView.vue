@@ -6,21 +6,20 @@ import { useForm } from "laravel-precognition-vue";
 import { api_url } from "@/lib/utils";
 import { useRouter } from "vue-router";
 // @ts-ignore
-import { ref, useTemplateRef } from "vue";
+import { ref } from "vue";
 
 import ProductsChooseBox from "@/components/ProductsChooseBox.vue";
 import type { ProductTransaction } from "@/models/transactions";
 
 const router = useRouter();
-const form = useForm<{ fornecedor: string; produtos: ProductTransaction[] }>(
+const form = useForm<{ cliente: string; produtos: ProductTransaction[] }>(
   "post",
-  api_url("/compras"),
+  api_url("/vendas"),
   {
-    fornecedor: "",
+    cliente: "",
     produtos: [],
   },
 );
-const search = ref("");
 const productsBoxRef = ref<InstanceType<typeof ProductsChooseBox> | null>();
 
 const submit = async () => {
@@ -28,8 +27,8 @@ const submit = async () => {
   try {
     form.produtos = productsBoxRef.value.selectedProducts;
     await form.submit();
-    router.push("/compras");
-    form.fornecedor = "";
+    router.push("/vendas");
+    form.cliente = "";
     form.produtos = [];
   } catch (e) {
     console.error(e);
@@ -41,31 +40,36 @@ const submit = async () => {
   <h1
     class="text-center text-2xl font-bold mb-6 text-emerald-600 dark:text-emerald-400"
   >
-    Registrar Compra
+    Registrar Venda
   </h1>
-  {{ search }}
+  <aside
+    class="max-w-7xl mx-auto bg-red-500 p-2 rounded-xl text-center"
+    v-if="form.invalid('produtos')"
+  >
+    {{ form.errors.produtos }}
+  </aside>
   <form class="mt-12 w-7xl mx-auto" @submit.prevent="submit">
     <FieldSet class="w-full">
       <FieldGroup>
         <Field>
-          <FieldLabel for="nome"> Nome do forncedor </FieldLabel>
+          <FieldLabel for="nome"> Nome do cliente </FieldLabel>
           <Input
             id="nome"
             type="text"
-            placeholder="Distribuidora João"
-            v-model="form.fornecedor"
-            @change="form.validate('fornecedor')"
+            placeholder="Fulano X"
+            v-model="form.cliente"
+            @change="form.validate('cliente')"
           />
           <span
-            v-if="form.invalid('fornecedor')"
+            v-if="form.invalid('cliente')"
             class="text-red-500 dark:text-red-300"
           >
-            {{ form.errors.fornecedor }}
+            {{ form.errors.cliente }}
           </span>
         </Field>
       </FieldGroup>
-      <ProductsChooseBox ref="productsBoxRef" />
-      <Button type="submit">Registrar Compra</Button>
+      <ProductsChooseBox ref="productsBoxRef" :errors="form.errors" />
+      <Button type="submit">Registrar Venda</Button>
     </FieldSet>
   </form>
 </template>

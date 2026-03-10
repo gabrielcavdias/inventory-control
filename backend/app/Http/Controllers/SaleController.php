@@ -6,7 +6,8 @@ use App\DTOs\SaleDTO;
 use App\Exceptions\NotEnoughProductsException;
 use App\Exceptions\ProductMismatchException;
 use App\Http\Requests\StoreSaleRequest;
-use App\Http\Requests\UpdateSaleRequest;
+use App\Http\Resources\SaleCollection;
+use App\Http\Resources\SaleShowResource;
 use App\Models\Sale;
 use App\Services\SaleService;
 use App\Traits\ApiResponses;
@@ -21,7 +22,15 @@ class SaleController extends Controller
      */
     public function index()
     {
-        //
+        $page = request()->query('page', 1);
+        $perPage = request()->query('per_page', 10);
+        try {
+            $items = $this->service->getAllPaginated($page, $perPage);
+            return new SaleCollection($items);
+        } catch (Throwable $e) {
+            logger("Erro ao buscar compras " . $e->getMessage());
+            return $this->errorResponse(message: "Erro ao buscar compras, tente novamente mais tarde.");
+        }
     }
 
     /**
@@ -43,17 +52,23 @@ class SaleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Sale $sale)
+    public function show(int $sale)
     {
-        //
+        try {
+            $saleItem = $this->service->findSaleWithProducts($sale);
+            return new SaleShowResource($saleItem);
+        } catch (Throwable $e) {
+            logger("Erro ao encontrar venda " . $e->getMessage());
+            return $this->errorResponse(message: "Erro ao encontrar venda, tente novamente mais tarde.");
+        }
     }
 
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Sale $sale)
+    public function destroy(int $sale)
     {
-        //
+        $this->service->cancelSale($sale);
     }
 }

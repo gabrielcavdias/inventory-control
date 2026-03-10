@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\DTOs\ProductDTO;
 use App\Models\Product;
+use App\Models\ProductPurchase;
+use App\Models\ProductSale;
+use DomainException;
 
 class ProductService
 {
@@ -29,7 +32,11 @@ class ProductService
 
     public function destroyProduct(Product $product): bool|null
     {
-        //  TODO: verificar se existem models relacionadas etc e tal
+        $sales = ProductSale::query()->where('product_id', $product->id)->count();
+        $purchases = ProductPurchase::query()->where('product_id', $product->id)->count();
+        if ($sales || $purchases) {
+            throw new DomainException("Não é possível excluir um produto que esteja em vendas ou compras");
+        }
         return $product->delete();
     }
 }

@@ -23,6 +23,11 @@ const router = createRouter({
       component: () => import("../views/PurchasesView.vue"),
     },
     {
+      path: "/compras/:id",
+      name: "compras-exibir",
+      component: () => import("../views/PurchaseShowView.vue"),
+    },
+    {
       path: "/compras/novo",
       name: "compras-criar",
       component: () => import("../views/PurchaseCreateView.vue"),
@@ -31,6 +36,16 @@ const router = createRouter({
       path: "/vendas",
       name: "vendas",
       component: () => import("../views/SalesView.vue"),
+    },
+    {
+      path: "/vendas/:id",
+      name: "vendas-exibir",
+      component: () => import("../views/SaleShowView.vue"),
+    },
+    {
+      path: "/vendas/novo",
+      name: "vendas-criar",
+      component: () => import("../views/SaleCreateView.vue"),
     },
     {
       path: "/produtos",

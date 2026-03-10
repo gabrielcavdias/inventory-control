@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\DTOs\SaleDTO;
+use App\DTOs\TransactionProductList;
 use App\Exceptions\NotEnoughProductsException;
 use App\Exceptions\ProductMismatchException;
+use App\Exceptions\SaleAlreadyCancelled;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Traits\ProductCalculation;
@@ -14,6 +16,20 @@ use Illuminate\Support\Facades\DB;
 class SaleService
 {
     use ProductCalculation;
+
+    public function getAllPaginated(int $page = 1, int $perPage = 10)
+    {
+        $sales =  Sale::query()
+            ->paginate(page: $page, perPage: $perPage);
+
+        return $sales;
+    }
+
+    public function findSaleWithProducts(int $id)
+    {
+        return Sale::query()->with('products')->findOrFail($id);
+    }
+
     public function createNewSale(SaleDTO $saleData)
     {
         return DB::transaction(function () use ($saleData) {
@@ -92,5 +108,27 @@ class SaleService
         }
 
         return $totalRevenue - $totalCost;
+    }
+
+    public function cancelSale(int $id)
+    {
+        $sale = Sale::query()->with('products')->findOrFail($id);
+        if (isset($sale->cancelled_at)) {
+            throw new SaleAlreadyCancelled();
+        }
+
+        return DB::transaction(function () use ($sale) {
+            $saleModel = Sale::query()->where('id', $sale->id)->with('products')->first();
+            $pivotList = $saleModel->products->map(fn($product) => $product->pivot)->toArray();
+            $transacctionProductList = new TransactionProductList($pivotList);
+            $saleDTO = new SaleDTO(
+                customer: $saleModel->customer,
+                products: $transacctionProductList,
+            );
+            $this->updateProductStockQuantities($saleDTO, '+'); // Retorna estoque
+            $saleModel->cancelled_at = now();
+            $saleModel->save();
+            return $saleModel->fresh();
+        });
     }
 }

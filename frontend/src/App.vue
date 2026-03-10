@@ -2,16 +2,20 @@
 import { RouterLink, RouterView, useRoute, useRouter } from "vue-router";
 import { useAppStore } from "@/stores/app";
 
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import AppHeader from "./components/common/AppHeader.vue";
 const appStore = useAppStore();
 const router = useRouter();
 const route = useRoute();
-onMounted(() => {
-  if (!appStore.isUserLoggedIn) {
-    router.push("/login");
-  }
-});
+watch(
+  () => appStore.isUserLoggedIn,
+  () => {
+    if (!appStore.isUserLoggedIn) {
+      router.push("/login");
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <template>

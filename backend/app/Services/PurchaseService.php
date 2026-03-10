@@ -21,6 +21,7 @@ class PurchaseService
             ->paginate(page: $page, perPage: $perPage)
             ->through(function ($purchase) {
                 return [
+                    'id' => $purchase->id,
                     'supplier' => $purchase->supplier,
                     'total_cost' => collect($purchase->products)->sum(function ($product) {
                         return $product->pivot->quantity * $product->pivot->unit_price;
@@ -28,6 +29,15 @@ class PurchaseService
                 ];
             });
         return $purchases;
+    }
+
+    public function findPurchaseWithProducts(int $id)
+    {
+        $purchase =  Purchase::query()->with('products')->findOrFail($id);
+        $purchase->total_cost = collect($purchase->products)->sum(function ($product) {
+            return $product->pivot->quantity * $product->pivot->unit_price;
+        });
+        return $purchase;
     }
 
     public function createNewPurchase(PurchaseDTO $purchaseData)

@@ -17,3 +17,7 @@ export function money(n: number) {
     currency: "BRL",
   }).format(n);
 }
+
+export function date(date: string) {
+  return new Intl.DateTimeFormat("pt-BR").format(new Date(date));
+}

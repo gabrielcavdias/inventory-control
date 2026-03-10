@@ -17,7 +17,6 @@ export const useApi = <T>() => {
     try {
       // @ts-ignore
       const response = await execute(api_url(path), window.axios);
-      console.log(response.data.value);
       data.value = response.data.value;
     } catch (e) {
       if (!(e instanceof AxiosError)) return;

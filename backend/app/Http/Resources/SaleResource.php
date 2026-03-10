@@ -18,6 +18,7 @@ class SaleResource extends JsonResource
             'id' => $this->id,
             'cliente' => $this->customer,
             'lucro' => $this->profit / 100,
+            'cancelada' => $this->cancelled_at,
         ];
     }
 }

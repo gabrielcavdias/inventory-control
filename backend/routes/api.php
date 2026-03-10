@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
             'compras' => 'purchase'
         ])->missing(function () {
             return response()->json(['message' => 'Compra não encontrado'], Response::HTTP_NOT_FOUND);
-        })->except(['update', 'destroy', 'show'])
+        })->except(['update', 'destroy'])
         ->middleware([HandlePrecognitiveRequests::class]);
 
     Route::apiResource('vendas', SaleController::class)

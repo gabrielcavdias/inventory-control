@@ -7,6 +7,7 @@ use App\Models\Purchase;
 use App\DTOs\PurchaseDTO;
 use App\Http\Resources\PurchaseIndexCollection;
 use App\Http\Resources\PurchaseResource;
+use App\Http\Resources\PurchaseShowResource;
 use App\Services\PurchaseService;
 use App\Traits\ApiResponses;
 use Throwable;
@@ -41,6 +42,20 @@ class PurchaseController extends Controller
         } catch (Throwable $e) {
             logger("Erro ao registrar compra " . $e->getMessage());
             return $this->errorResponse(message: "Erro ao registrar compra, tente novamente mais tarde.");
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(int $purchase)
+    {
+        try {
+            $purchaseItem = $this->service->findPurchaseWithProducts($purchase);
+            return new PurchaseShowResource($purchaseItem);
+        } catch (Throwable $e) {
+            logger("Erro ao encontrar compra " . $e->getMessage());
+            return $this->errorResponse(message: "Erro ao encontrar compra, tente novamente mais tarde.");
         }
     }
 }

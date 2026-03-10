@@ -14,6 +14,18 @@ const {
   fetchData,
 } = useApi<PaginatedResponse<Product>>();
 
+const { errors } = defineProps<{ errors?: Record<string, string> }>();
+const parsedErrors = computed(() => {
+  const errorsMap = new Map<number, string>();
+  Object.entries(errors ?? []).forEach(([label, error]) => {
+    const matches = label.match(/produtos\.(\d+)\.(.+)/);
+    if (matches) {
+      const [_, index] = matches;
+      errorsMap.set(+(index as string), error);
+    }
+  });
+  return errorsMap;
+});
 const search = shallowRef("");
 const searchDebounced = refDebounced(search, 500);
 const selectedProducts = ref<
@@ -143,10 +155,16 @@ defineExpose({
 
       <div v-else class="space-y-4 max-h-96 overflow-y-auto">
         <div
-          v-for="product in selectedProducts"
+          v-for="(product, index) in selectedProducts"
           :key="product.id"
           class="p-3 border border-gray-200 dark:border-gray-700 rounded"
         >
+          <span
+            class="text-red-500 dark:text-red-400"
+            v-if="parsedErrors.has(index)"
+            >{{ parsedErrors.get(index) }}</span
+          >
+
           <div class="flex justify-between items-start mb-2">
             <div>
               <span class="font-medium">{{ product.nome }}</span>

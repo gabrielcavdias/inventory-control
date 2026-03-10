@@ -60,6 +60,7 @@ onMounted(() => {
             >
               Custo Total
             </th>
+            <th>#</th>
           </tr>
         </thead>
 
@@ -70,6 +71,14 @@ onMounted(() => {
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">
               {{ money(compra.custo_total) }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm flex justify-center">
+              <RouterLink
+                :to="`/compras/${compra.id}`"
+                class="bg-emerald-600 hover:bg-emerald-500 rounded-lg text-center py-3 px-5 text-gray-200"
+              >
+                Acessar
+              </RouterLink>
             </td>
           </tr>
         </tbody>
